@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="@drawable/btn_selector"
+
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="260dp"
+        android:layout_height="260dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical|center"
+        android:orientation="vertical" >
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <Button
+                android:id="@+id/commentButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="45dp"
+                android:layout_marginLeft="45dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/ic_comment" />
+
+            <TextView
+                android:text="评论"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/commentButton"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="58dp"
+                />
+            <Button
+                android:id="@+id/imageButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="45dp"
+                android:layout_marginRight="45dp"
+                android:layout_alignParentRight="true"
+                android:layout_alignParentTop="true"
+                android:background="@drawable/ic_image" />
+            <TextView
+                android:text="图片"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/imageButton"
+                android:layout_alignParentRight="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginRight="58dp"
+                />
+            <Button
+                android:id="@+id/voiceButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginTop="40dp"
+                android:layout_marginLeft="45dp"
+                android:layout_alignParentLeft="true"
+                android:layout_below="@id/commentButton"
+                android:background="@drawable/ic_voice" />
+            <TextView
+                android:text="语音"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/voiceButton"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="8dp"
+                android:layout_marginLeft="58dp"
+                />
+            <Button
+                android:id="@+id/videoButton"
+                android:layout_width="60dp"
+                android:layout_height="60dp"
+                android:layout_marginRight="45dp"
+                android:layout_marginTop="40dp"
+                android:layout_alignParentRight="true"
+                android:layout_below="@id/imageButton"
+                android:background="@drawable/ic_video" />
+
+            <TextView
+                android:text="视频"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/videoButton"
+                android:layout_alignParentRight="true"
+                android:layout_marginRight="58dp"
+                android:layout_marginTop="8dp"
+                />
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

@@ -33,14 +33,15 @@
                 />
 
             <Button
+                android:id="@+id/navigationButton"
                 android:layout_width="55dp"
                 android:layout_height="55dp"
-                android:layout_below="@+id/recommendButton"
                 android:layout_alignParentRight="true"
                 android:layout_marginTop="10dp"
                 android:layout_marginRight="18dp"
                 android:text="导航"
                 android:textColor="@color/colorText"
+                android:layout_below="@+id/recommendButton"
                 android:textSize="16sp"
                 android:background = "@drawable/btn_selector"
                 />
@@ -54,10 +55,5 @@
         android:background="@color/colorButton"
         android:textColor="@color/colorText"
         android:textSize="30sp"
-        />
-    <ImageView
-        android:id="@+id/ic_geo"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         />
 </LinearLayout>
