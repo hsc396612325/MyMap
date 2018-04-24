@@ -1,23 +1,22 @@
 package com.example.heshu.mymap.view;
 
-import com.baidu.mapapi.model.LatLng;
 import com.example.heshu.mymap.bean.LocationBean;
+
+import java.util.List;
 
 /**
  * Created by heshu on 2018/1/29.
  */
 
 public interface IMapView {
-    public void showLocation(LocationBean locationBean);
+    void showLocation(LocationBean locationBean);
 
-    public void dissmissLocation();
+    void dissmissLocation();
 
-    public void showOneSpot(LocationBean locationBean);
+    void dissmissOneSpot(LocationBean locationBean);
+    void showAllSpot(List<LocationBean> locationBeanList);
 
-    public void dissmissOneSpot(LocationBean locationBean);
+    void dissMissAllSpot();
 
-    public void showAllSpot();
-
-    public void dissMissAllSpot();
 
 }

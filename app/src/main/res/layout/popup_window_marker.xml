@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_gravity="center"
+    android:background="#0000">
+
+    <LinearLayout
+        android:layout_width="206dp"
+        android:layout_height="136dp"
+        android:layout_centerInParent="true"
+        android:layout_gravity="center_vertical|center"
+        android:background="#0000"
+        android:orientation="vertical" >
+        <RelativeLayout
+            android:id="@+id/popup_window_marker_relative"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+            <LinearLayout
+                android:id="@+id/comment_layout"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="100dp"
+                android:layout_marginLeft="70dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                >
+            <Button
+                android:id="@+id/commentButton2"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_comment" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/image_layout"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="86dp"
+                android:layout_marginLeft="120dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                >
+            <Button
+                android:id="@+id/imageButton2"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_image" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/voice_layout"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="50dp"
+                android:layout_marginLeft="156dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                >
+            <Button
+                android:id="@+id/voiceButton2"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_voice" />
+            </LinearLayout>
+            <LinearLayout
+                android:id="@+id/video_layout"
+                android:layout_width="40dp"
+                android:layout_height="40dp"
+                android:layout_marginBottom="0dp"
+                android:layout_marginLeft="170dp"
+                android:layout_alignParentLeft="true"
+                android:layout_alignParentBottom="true"
+                >
+            <Button
+                android:id="@+id/videoButton2"
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/ic_video" />
+            </LinearLayout>
+        </RelativeLayout>
+    </LinearLayout>
+</RelativeLayout>

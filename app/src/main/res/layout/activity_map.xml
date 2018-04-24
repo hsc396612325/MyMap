@@ -1,59 +1,96 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.heshu.mymap.view.MapActivity"
-    android:orientation="vertical">
-        <RelativeLayout
+    android:orientation="vertical"
+    tools:context="com.example.heshu.mymap.view.MapActivity">
+
+    <RelativeLayout
+        android:id="@+id/map_layout"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="20">
+
+        <com.baidu.mapapi.map.MapView
+            android:id="@+id/bmapView"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="10"
-            >
-            <com.baidu.mapapi.map.MapView
-                android:id="@+id/bmapView"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:clickable="true" />
+            android:layout_height="match_parent"
+            android:clickable="true" />
 
-            <Button
-                android:id="@+id/recommendButton"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignParentTop="true"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="35dp"
-                android:layout_marginRight="18dp"
-                android:text = "推荐"
-                android:textColor="@color/colorText"
-                android:textSize="16sp"
-                android:background = "@drawable/btn_selector"
-                />
+        <Button
+            android:id="@+id/recommendButton"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentTop="true"
+            android:layout_marginRight="18dp"
+            android:layout_marginTop="35dp"
+            android:background="@drawable/btn_selector"
+            android:text="推荐"
+            android:textColor="@color/colorText"
+            android:textSize="16sp" />
 
-            <Button
-                android:id="@+id/navigationButton"
-                android:layout_width="55dp"
-                android:layout_height="55dp"
-                android:layout_alignParentRight="true"
-                android:layout_marginTop="10dp"
-                android:layout_marginRight="18dp"
-                android:text="导航"
-                android:textColor="@color/colorText"
-                android:layout_below="@+id/recommendButton"
-                android:textSize="16sp"
-                android:background = "@drawable/btn_selector"
-                />
+        <Button
+            android:id="@+id/navigationButton"
+            android:layout_width="55dp"
+            android:layout_height="55dp"
+            android:layout_alignParentRight="true"
+            android:layout_below="@+id/recommendButton"
+            android:layout_marginRight="18dp"
+            android:layout_marginTop="10dp"
+            android:background="@drawable/btn_selector"
+            android:text="导航"
+            android:textColor="@color/colorText"
+            android:textSize="16sp" />
     </RelativeLayout>
+
     <Button
         android:id="@+id/addButton"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1"
-        android:text="＋"
+        android:layout_weight="2"
         android:background="@color/colorButton"
+        android:text="添加点"
         android:textColor="@color/colorText"
-        android:textSize="30sp"
-        />
+        android:textSize="18sp" />
+
+    <LinearLayout
+        android:id="@+id/gone_linear"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="3"
+        android:orientation="vertical"
+        android:visibility="gone">
+
+        <Button
+            android:id="@+id/shoot_button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:background="@color/colorButton"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            style="?android:attr/borderlessButtonStyle"
+            />
+
+        <View
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:background="#FFFFFF" />
+
+        <Button
+            android:id="@+id/storage_button"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="20"
+            android:background="@color/colorButton"
+            android:textColor="@color/colorText"
+            android:textSize="18sp"
+            style="?android:attr/borderlessButtonStyle"
+            />
+
+    </LinearLayout>
 </LinearLayout>
