@@ -22,6 +22,5 @@ public class RequestFactory {
                 .baseUrl(MainUrl)
                 .addConverterFactory(GsonConverterFactory.create(gson))
                 .build();
-
     }
 }

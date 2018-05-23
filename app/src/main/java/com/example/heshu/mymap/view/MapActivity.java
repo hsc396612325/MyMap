@@ -109,6 +109,7 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
         SDKInitializer.initialize(getApplicationContext());
         setContentView(R.layout.activity_map);
 
+        Log.d(TAG, "onCreate: ");
         initView();
         initPermission();
         RegisterTokenUtil.Register();

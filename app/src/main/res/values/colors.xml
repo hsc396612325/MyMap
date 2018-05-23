@@ -11,6 +11,7 @@
     <color name="colorText2">#444444</color>
     <color name="colorText3">#000000</color>
     <color name="colorText4">#808080</color>
-    <color name="colorLine">#747474</color>
+    <color name="colorText5">#F0F5ACAC</color>
+    <color name="colorLine">#CECECE</color>
     <color name="colorLucency">#80444444</color>
 </resources>

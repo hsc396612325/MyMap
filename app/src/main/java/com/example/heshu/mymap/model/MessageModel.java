@@ -1,5 +1,7 @@
 package com.example.heshu.mymap.model;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.util.Log;
 
 import com.example.heshu.mymap.bean.MessageBean;
@@ -7,6 +9,7 @@ import com.example.heshu.mymap.gson.RetrofitReturnGetMessage;
 import com.example.heshu.mymap.network.IMessageRequest;
 import com.example.heshu.mymap.network.RequestFactory;
 import com.example.heshu.mymap.presenter.ShowMessagePresenter;
+import com.example.heshu.mymap.view.App;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,8 +36,10 @@ public class MessageModel implements IMessageModel{
     @Override
     public void pointMessageInit(int pointId, final int type) {
         mMessageBeanList = null;
+        SharedPreferences preferences = App.getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
+        String mToken = preferences.getString("token","");
         IMessageRequest request = RequestFactory.getRetrofit().create(IMessageRequest.class);
-        Call<RetrofitReturnGetMessage> call = request.getMessage("none/getMessage/" + pointId, pointId,type);
+        Call<RetrofitReturnGetMessage> call = request.getMessage("none/getMessage/" + pointId,mToken, pointId,type);
 
         call.enqueue(new Callback<RetrofitReturnGetMessage>() {
             //请求成功时回调
@@ -58,6 +63,7 @@ public class MessageModel implements IMessageModel{
                         messageBean.setLikeFlag(data.likeFlag);
                         messageBean.setCommentId(data.dataId);
                         Log.d(TAG, "onResponse: "+data.content);
+                        Log.d(TAG, "onResponse: "+data.likeFlag);
                         mMessageBeanList.add(messageBean);
                     }
                 }

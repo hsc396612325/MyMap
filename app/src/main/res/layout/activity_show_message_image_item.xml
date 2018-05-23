@@ -4,7 +4,7 @@
     android:layout_height="wrap_content">
 
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/head_portrait"
         android:layout_width="60dp"
         android:layout_height="60dp"
@@ -22,13 +22,26 @@
         android:layout_marginTop="10dp"
         android:layout_toRightOf="@id/head_portrait"
         android:text="用户名"
+        android:textColor="@color/colorText5"
         android:textSize="15sp" />
 
+    <TextView
+        android:id="@+id/headline"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/name"
+        android:layout_toRightOf="@id/head_portrait"
+        android:layout_marginTop="2dp"
+        android:layout_marginLeft="10dp"
+        android:textColor="@color/colorText3"
+        android:textSize="16sp"
+        android:text="标题"
+        />
     <FrameLayout
         android:id="@+id/image_layout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/name"
+        android:layout_below="@id/headline"
         android:layout_marginLeft="10dp"
         android:layout_marginTop="2dp"
         android:layout_toRightOf="@id/head_portrait">

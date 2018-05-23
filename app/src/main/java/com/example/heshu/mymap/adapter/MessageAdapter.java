@@ -2,6 +2,9 @@ package com.example.heshu.mymap.adapter;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.drawable.AnimationDrawable;
+import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Build;
@@ -31,6 +34,7 @@ import com.example.heshu.mymap.util.MediaPlayerUtil;
 import com.example.heshu.mymap.view.App;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import retrofit2.Call;
@@ -75,6 +79,8 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         VideoView videoView;
         ImageView videoImage;
+        Button PlayButton;
+
         public ViewHolder(View itemView) {
             super(itemView);
             imageView = (ImageView) itemView.findViewById(R.id.head_portrait);
@@ -92,8 +98,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             } else if (mType == TYPE_VOICE) {
                 playButton = (Button) itemView.findViewById(R.id.play_button);
             } else if (mType == TYPE_VIDEO) {
-                videoView = (VideoView)itemView.findViewById(R.id.video);
-                videoImage = (ImageView)itemView.findViewById(R.id.video_image);
+                videoView = (VideoView) itemView.findViewById(R.id.video);
+                videoImage = (ImageView) itemView.findViewById(R.id.video_image);
+                playButton = (Button) itemView.findViewById(R.id.play_video_button);
             }
         }
     }
@@ -132,13 +139,27 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.date.setText(messageBean.getDate());
         holder.comtNum.setText("(" + messageBean.getComtNum() + ")");
         holder.likeNum.setText("(" + messageBean.getLikeNum() + ")");
+        if(messageBean.isLikeFlag()==true) {
+            holder.likeButton.setBackgroundResource(R.drawable.ic_like_ok);
+        }else {
+            holder.likeButton.setBackgroundResource(R.drawable.ic_like);
+        }
+
         holder.likeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if (!messageBean.isLikeFlag()) {
                     holder.likeNum.setText("(" + (messageBean.getLikeNum() + 1) + ")");
                     messageBean.setLikeFlag(true);
+                    messageBean.setLikeNum(messageBean.getLikeNum() + 1);
                     isLike(messageBean.getCommentId());
+                    holder.likeButton.setBackgroundResource(R.drawable.ic_like_ok);
+                }else {
+                    holder.likeNum.setText("(" + (messageBean.getLikeNum() - 1) + ")");
+                    messageBean.setLikeFlag(false);
+                    messageBean.setLikeNum(messageBean.getLikeNum() - 1);
+                    unLike(messageBean.getCommentId());
+                    holder.likeButton.setBackgroundResource(R.drawable.ic_like);
                 }
             }
         });
@@ -153,11 +174,11 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     ImageBean imageBean = new ImageBean(Prefix + Uri[i], 1, 200, 200);
                     list.add(imageBean);
                 }
-                if(list.size() ==1){
+                if (list.size() == 1) {
                     holder.imageGridlayout.setVisibility(View.GONE);
                     holder.imageConView.setVisibility(View.VISIBLE);
-                    handlerOneImage(holder,list.get(0));
-                }else {
+                    handlerOneImage(holder, list.get(0));
+                } else {
                     holder.imageGridlayout.setVisibility(View.VISIBLE);
                     holder.imageConView.setVisibility(View.GONE);
                     holder.imageGridlayout.setImagesData(list);
@@ -167,28 +188,46 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             MediaPlayerUtil.initPaly(Prefix + messageBean.getCommentText());
             holder.playButton.setText(MediaPlayerUtil.mediaPlayerDate());
             MediaPlayerUtil.mediaPlayerStop();
+            final AnimationDrawable frameAnim = (AnimationDrawable) mContext.getResources().getDrawable(R.drawable.sound);
+            frameAnim.setBounds(0, 0, frameAnim.getMinimumWidth(), frameAnim.getMinimumHeight());
+            holder.playButton.setCompoundDrawables(frameAnim, null, null, null);
+
+
             holder.playButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
                     MediaPlayerUtil.initPaly(Prefix + messageBean.getCommentText());
                     MediaPlayerUtil.mediaPlayerStart();
+                    MediaPlayerUtil.midiaPlayerSetListenrt((new MediaPlayer.OnCompletionListener() {
+                        @Override
+                        public void onCompletion(MediaPlayer mp) {
+                            Log.d("tag", "播放完毕");
+                            frameAnim.stop();
+                            frameAnim.selectDrawable(0);
+                        }
+                    }));
+                    frameAnim.start();
                 }
             });
-        } else if(mType == TYPE_VIDEO){
+
+
+        } else if (mType == TYPE_VIDEO) {
             holder.videoView.setMediaController(new MediaController(mContext));
-            holder.videoView.setOnCompletionListener( new MyPlayerOnCompletionListener());
-            holder.videoView.setZOrderOnTop(true);
-            holder.videoImage.setOnClickListener(new View.OnClickListener() {
+            holder.videoView.setOnCompletionListener(new MyPlayerOnCompletionListener());
+            holder.videoView.setVideoURI(Uri.parse(Prefix + messageBean.getCommentText()));
+
+            MediaMetadataRetriever media = new MediaMetadataRetriever();
+            media.setDataSource(Prefix + messageBean.getCommentText(), new HashMap());
+            Bitmap bitmap = media.getFrameAtTime();
+            holder.videoImage.setImageBitmap(bitmap);
+
+            holder.playButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
+                    holder.playButton.setVisibility(View.INVISIBLE);
                     holder.videoImage.setVisibility(View.INVISIBLE);
                     holder.videoView.setVisibility(View.VISIBLE);
-
-//                  holder.videoView.setVideoURI(Uri.parse(Prefix + messageBean.getCommentText()));
-                    holder.videoView.setVideoURI(Uri.parse("http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4"));
                     holder.videoView.start();
-                    Log.d(TAG, "onClick: "+"http://clips.vorwaerts-gmbh.de/big_buck_bunny.mp4");
-                    holder.videoView.requestFocus();
                 }
             });
         }
@@ -215,6 +254,32 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 Log.d("pushComment", "" + retrofitPoint);
                 Log.d("pushComment", "" + retrofitPoint.message);
                 Log.d("pushComment", "" + retrofitPoint.status);
+            }
+
+            //请求失败时回调
+            @Override
+            public void onFailure(Call<RetrofitReturn> call, Throwable throwable) {
+                Log.d("连接失败", "" + throwable.toString());
+            }
+        });
+    }
+
+    //取消点赞
+    private void unLike(int CommentId) {
+        ILikeAndRemarksRequest request = RequestFactory.getRetrofit().create(ILikeAndRemarksRequest.class);
+
+        Call call = request.unLike(mToken, 1, CommentId);
+        Log.d(TAG, "unLike: " + CommentId);
+        //发送网络请求(异步)
+        call.enqueue(new Callback<RetrofitReturn>() {
+            //请求成功时回调
+            @Override
+            public void onResponse(Call<RetrofitReturn> call, Response<RetrofitReturn> response) {
+                RetrofitReturn retrofitPoint = response.body();
+                Log.d(TAG, "" + response);
+                Log.d(TAG, "" + retrofitPoint);
+                Log.d(TAG, "" + retrofitPoint.message);
+                Log.d(TAG, "" + retrofitPoint.status);
             }
 
             //请求失败时回调
@@ -255,11 +320,12 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.imageConView.setImageUrl(imageBean.getUrl());
         Log.d(TAG, "handlerOneImage: " + imageBean.getUrl());
     }
+
     class MyPlayerOnCompletionListener implements MediaPlayer.OnCompletionListener {
 
         @Override
         public void onCompletion(MediaPlayer mp) {
-            Toast.makeText( mContext, "播放完成了", Toast.LENGTH_SHORT).show();
+            Toast.makeText(mContext, "播放完成了", Toast.LENGTH_SHORT).show();
         }
     }
 }

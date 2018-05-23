@@ -49,4 +49,8 @@ public class MediaPlayerUtil {
         java.text.SimpleDateFormat format = new SimpleDateFormat("mm:ss");
         return   format.format(mMediaPlayer.getDuration());
     }
+
+    public static void midiaPlayerSetListenrt(MediaPlayer.OnCompletionListener listener){
+        mMediaPlayer.setOnCompletionListener(listener);
+    }
 }

@@ -36,7 +36,7 @@ public interface IMessageRequest {
     //信息的获取
     @POST
     @FormUrlEncoded
-    Call<RetrofitReturnGetMessage> getMessage(@Url String url,@Field("pointId") int id, @Field("type")int type);
+    Call<RetrofitReturnGetMessage> getMessage(@Url String url, @Header("token") String token,@Field("pointId") int id, @Field("type")int type);
 
     //多文件上传
     @POST

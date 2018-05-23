@@ -5,12 +5,12 @@
     android:layout_height="wrap_content">
 
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/head_portrait"
         android:layout_width="60dp"
         android:layout_height="60dp"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
         android:src="@drawable/ic_head_portrait"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
@@ -38,7 +38,7 @@
         android:layout_marginTop="8dp"
         android:layout_marginLeft="10dp"
         android:paddingLeft="5dp"
-        android:drawableLeft="@drawable/ic_sound"
+        android:drawableLeft="@drawable/sound"
         android:gravity="center_vertical"
         android:drawablePadding="5dp"
         android:text="00:00"

@@ -18,4 +18,8 @@ public interface ILikeAndRemarksRequest {
     @FormUrlEncoded
     Call<RetrofitReturn> addLike(@Header("token")String token,@Field("type")int type,@Field("infoOrRemarkId")int infoOrRemarkId) ;
 
+    //取消点赞
+    @POST("unclick")
+    @FormUrlEncoded
+    Call<RetrofitReturn> unLike(@Header("token")String token,@Field("type")int type,@Field("infoOrRemarkId")int infoOrRemarkId);
 }

@@ -2,6 +2,7 @@ package com.example.heshu.mymap.view;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.AnimationDrawable;
 import android.media.MediaMetadataRetriever;
 import android.media.MediaPlayer;
 import android.net.Uri;
@@ -79,6 +80,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
     private String date;
     private MediaPlayer mMediaPlayer;
     private Button mPlayVoiceButton;
+    private AnimationDrawable mFrameAnim;
     //视频
     private VideoView mVideoView;
     private ImageView mImageView;
@@ -151,6 +153,12 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
             mPlayVoiceButton = (Button) findViewById(R.id.play_voice_button);
             mPlayVoiceButton.setText(date);
             mPlayVoiceButton.setOnClickListener(this);
+
+            mFrameAnim = (AnimationDrawable) getResources().getDrawable(R.drawable.sound);
+            mFrameAnim.setBounds(0, 0, mFrameAnim.getMinimumWidth(), mFrameAnim.getMinimumHeight());
+            mPlayVoiceButton.setCompoundDrawables(mFrameAnim, null, null, null);
+
+
         } else if (fileType == TYPE_VIDEO) {
             mTvLeftNum = (TextView) findViewById(R.id.tv_left_num);
             mEditText = (EditText) findViewById(R.id.edit_text);
@@ -242,6 +250,15 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
                 break;
             case R.id.play_voice_button:
                 MediaPlayerUtil.mediaPlayerStart();
+                MediaPlayerUtil.midiaPlayerSetListenrt((new MediaPlayer.OnCompletionListener() {
+                    @Override
+                    public void onCompletion(MediaPlayer mp) {
+                        Log.d("tag", "播放完毕");
+                        mFrameAnim.stop();
+                        mFrameAnim.selectDrawable(0);
+                    }
+                }));
+                mFrameAnim.start();
                 break;
             case R.id.play_video_button:
                 mPlayVideoButton.setVisibility(View.INVISIBLE);

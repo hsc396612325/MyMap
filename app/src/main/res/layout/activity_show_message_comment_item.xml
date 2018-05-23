@@ -5,12 +5,12 @@
     android:layout_height="wrap_content">
 
 
-    <ImageView
+    <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/head_portrait"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
+        android:layout_width="50dp"
+        android:layout_height="50dp"
         android:layout_alignParentLeft="true"
-        android:layout_centerVertical="true"
+        android:layout_alignParentTop="true"
         android:src="@drawable/ic_head_portrait"
         android:layout_marginTop="10dp"
         android:layout_marginLeft="10dp"
@@ -26,6 +26,7 @@
         android:layout_marginLeft="10dp"
         android:textSize="15sp"
         android:text="用户名"
+        android:textColor="@color/colorText5"
         />
 
     <TextView
@@ -36,7 +37,8 @@
         android:layout_toRightOf="@id/head_portrait"
         android:layout_marginTop="2dp"
         android:layout_marginLeft="10dp"
-        android:textSize="15sp"
+        android:textColor="@color/colorText3"
+        android:textSize="17sp"
         android:text="内容"
         />
 
