@@ -85,6 +85,8 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
     private static final int TYPE_COMMENT = 0;
     private static final int TYPE_IMAGE = 1;
     private static final int TYPE_VOICE = 2;
+
+
     private static final int TYPE_VIDEO = 3;
 
     private enum status_button {
