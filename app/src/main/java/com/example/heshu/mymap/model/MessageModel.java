@@ -56,13 +56,14 @@ public class MessageModel implements IMessageModel{
                     for(RetrofitReturnGetMessage.Data data: retrofitReturn.dataList){
                         MessageBean messageBean = new MessageBean();
                         messageBean.setName(data.userName);
-                        messageBean.setCommentText(data.content);
+                        messageBean.setCommentText(data.content.url);
                         messageBean.setDate(data.createAt);
                         messageBean.setLikeNum(data.likeNum);
                         messageBean.setComtNum(data.comtNum);
                         messageBean.setLikeFlag(data.likeFlag);
                         messageBean.setCommentId(data.dataId);
-                        Log.d(TAG, "onResponse: "+data.content);
+                        messageBean.setTitle(data.content.title);
+                        messageBean.setUrls(data.content.urls);
                         Log.d(TAG, "onResponse: "+data.likeFlag);
                         mMessageBeanList.add(messageBean);
                     }

@@ -14,8 +14,8 @@ public interface IReleaseModel  {
     //将评论上传
     void pushComment(int pointId,String eText);
     //将文件上传
-    void pushFile(int pointId,int type,String uri);
-    void pushFile(int pointId,int type,Uri uri);
+    void pushFile(int pointId,int type,String uri,String title);
+    void pushFile(int pointId,int type,Uri uri,String title);
     //上传多个图片文件
     void pushImageFile(int pointId, List<String> urlList);
 }

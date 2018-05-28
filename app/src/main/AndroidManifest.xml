@@ -52,6 +52,9 @@
 
         <activity android:name=".view.AddActivity" />
         <activity android:name=".view.ShowMessageActivity"/>
+        <activity android:name=".view.ShowCommentActivity"
+            android:windowSoftInputMode="stateHidden|adjustResize"
+            />
     </application>
 
 </manifest>

@@ -10,7 +10,6 @@ import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Environment;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
@@ -56,6 +55,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.nereo.multi_image_selector.MultiImageSelector;
+import me.nereo.multi_image_selector.MultiImageSelectorActivity;
 import q.rorbin.badgeview.QBadgeView;
 
 public class MapActivity extends BaseActivity implements IMapView, View.OnClickListener {
@@ -75,8 +76,8 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
 
     PopupWindow mPopupWindow;
 
-    private static final int PHOTO_REQUEST_CAREMA = 10;// 拍照
-    private static final int PHOTO_REQUEST_GALLERY = 20;// 从相册中选择
+    private static final int REQUEST_IMAGE = 10;// 从相册中选择
+
     private static final String PHOTO_FILE_NAME = "temp_photo.jpg";
     private static final int RECORD_SYSTEM_VIDEO = 30; //拍摄短视频
     private static final int RECORD_STORAGE_VIDEO = 40; //从图库中打开视频
@@ -347,29 +348,6 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
     }
 
 
-    //从相机中获得图片
-    private void camera() {
-        //激活相机
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        if (FileUtil.hasSdcard()) {
-            mTempFile = new File(Environment.getExternalStorageDirectory(), PHOTO_FILE_NAME);
-
-            //从文件中创建uri
-            Uri uri = Uri.fromFile(mTempFile);
-            intent.putExtra(MediaStore.EXTRA_OUTPUT, uri);
-        }
-        //开启一个带返回值的Activity
-        startActivityForResult(intent, PHOTO_REQUEST_CAREMA);
-    }
-
-    //从图库中获取图片
-    private void gallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-
-        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
-    }
-
     // 拍摄短视频
     private void customVideo() {
         Uri fileUri = Uri.fromFile(FileUtil.getOutPutMediaFile());
@@ -388,24 +366,17 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PHOTO_REQUEST_CAREMA) {  // 拍照
+        if (requestCode == REQUEST_IMAGE) {  // 拍照
             if (FileUtil.hasSdcard()) {
-                Uri uri = Uri.fromFile(mTempFile);
+                List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+
                 Intent intent = new Intent(MapActivity.this, AddActivity.class);
                 intent.putExtra("fileType", "" + TYPE_IMAGE);
-                intent.putExtra("image", uri.toString());
                 intent.putExtra("Point", mMarkerPoint);
+                intent.putStringArrayListExtra("image", (ArrayList<String>) path);
                 startActivity(intent);
             } else {
                 Toast.makeText(MapActivity.this, "未找到储存卡", Toast.LENGTH_SHORT);
-            }
-        } else if (requestCode == PHOTO_REQUEST_GALLERY) { //从图库中获得
-            if (data != null) {
-                Intent intent = new Intent(MapActivity.this, AddActivity.class);
-                intent.putExtra("fileType", "" + TYPE_IMAGE);
-                intent.putExtra("Point", mMarkerPoint);
-                intent.putExtra("image", data.getData().toString());
-                startActivity(intent);
             }
         } else if (requestCode == RECORD_SYSTEM_VIDEO || requestCode == RECORD_STORAGE_VIDEO) { // 拍摄短视频或者从图库中获得
             Log.d("video", "" + data.getData().toString());
@@ -472,12 +443,15 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
             mPopupWindow.dismiss();
             break;
             case R.id.imageButton:
-                mAddButton.setVisibility(View.GONE);
-                mLinearLayout.setVisibility(View.VISIBLE);
-                mShootButton.setText("拍摄");
-                mStorageButton.setText("图库");
-                flag = true;
-                mPopupWindow.dismiss();
+//                mAddButton.setVisibility(View.GONE);
+//                mLinearLayout.setVisibility(View.VISIBLE);
+//                mShootButton.setText("拍摄");
+//                mStorageButton.setText("图库");
+//                flag = true;
+//                mPopupWindow.dismiss();
+                MultiImageSelector.create(MapActivity.this)
+                        .start(MapActivity.this, REQUEST_IMAGE);
+
                 break;
             case R.id.voiceButton:
                 mPopupWindow.dismiss();
@@ -495,20 +469,16 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
             case R.id.shoot_button:
                 mAddButton.setVisibility(View.VISIBLE);
                 mLinearLayout.setVisibility(View.GONE);
-                if (flag) {
-                    camera();
-                } else {
-                    customVideo();
-                }
+
+                customVideo();
+
                 break;
             case R.id.storage_button:
                 mAddButton.setVisibility(View.VISIBLE);
                 mLinearLayout.setVisibility(View.GONE);
-                if (flag) {
-                    gallery();
-                } else {
-                    choiceVideo();
-                }
+
+                choiceVideo();
+
                 break;
             case R.id.popup_window_marker_relative:
                 Log.d(TAG, "onClick: popup_window_marker");
@@ -518,9 +488,7 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
                 break;
             case R.id.commentButton2:
                 if (mMarkerPoint.getCommentNum() != 0) {
-                    Intent intent = new Intent(MapActivity.this, ShowMessageActivity.class);
-                    intent.putExtra("fileType", "" + TYPE_COMMENT);
-                    intent.putExtra("Point", mMarkerPoint);
+                    Intent intent = new Intent(MapActivity.this, ShowCommentActivity.class);
                     startActivity(intent);
                 }
 
@@ -541,7 +509,7 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
                 mAddButton.setText("添加点");
                 break;
             case R.id.voiceButton2:
-                if (mMarkerPoint.getVoiceNum()!= 0) {
+                if (mMarkerPoint.getVoiceNum() != 0) {
                     Intent intent = new Intent(MapActivity.this, ShowMessageActivity.class);
                     intent.putExtra("fileType", "" + TYPE_VOICE);
                     intent.putExtra("Point", mMarkerPoint);

@@ -32,16 +32,16 @@ public class ReleasePresenter {
         rModel.pushComment(id, eText);
     }
 
-    public void requestPushImage(final Uri uri, final List<String> urlList, int id) {
+    public void requestPushImage( final List<String> urlList, int id) {
         rModel.pushImageFile(id, urlList);
     }
 
-    public void requestPushVideo(final Uri uri, int id) {
-        rModel.pushFile(id, VIDEO_TYPE, uri);
+    public void requestPushVideo(final Uri uri, int id,String title) {
+        rModel.pushFile(id, VIDEO_TYPE, uri,title);
     }
 
-    public void requestPushVoice(final String uri, int id) {
-        rModel.pushFile(id, VOICE_TYPE, uri);
+    public void requestPushVoice(final String uri, int id,String title) {
+        rModel.pushFile(id, VOICE_TYPE, uri,title);
     }
 
     public void fileOK(){

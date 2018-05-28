@@ -22,4 +22,6 @@ public interface IUserRequest {
     @POST("user/login")
     @FormUrlEncoded
     Call<RetrofitReturn> login (@Field("account") String account, @Field("password") String password);
+
+
 }

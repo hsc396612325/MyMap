@@ -33,6 +33,7 @@ public class ReleaseModel implements IReleaseModel {
     private static final String TAG = "ReleaseModel";
     private String mToken;
     private ReleasePresenter mReleasePresenter;
+
     public ReleaseModel(ReleasePresenter presenter) {
         mReleasePresenter = presenter;
     }
@@ -41,8 +42,8 @@ public class ReleaseModel implements IReleaseModel {
     public void pushComment(int pointId, String eText) {
         final IMessageRequest request = RequestFactory.getRetrofit().create(IMessageRequest.class);
         SharedPreferences preferences = App.getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-        mToken = preferences.getString("token","");
-        Log.d(TAG, "ReleaseModel: "+mToken);
+        mToken = preferences.getString("token", "");
+        Log.d(TAG, "ReleaseModel: " + mToken);
         Call<RetrofitReturn> call = request.addComment("addMessage/" + pointId, mToken, pointId, eText);
         //发送网络请求(异步)
         call.enqueue(new Callback<RetrofitReturn>() {
@@ -50,9 +51,9 @@ public class ReleaseModel implements IReleaseModel {
             @Override
             public void onResponse(Call<RetrofitReturn> call, Response<RetrofitReturn> response) {
                 RetrofitReturn retrofitReturn = response.body();
-                Log.d(TAG, "onResponse: "+response);
-                Log.d(TAG, "onResponse: "+retrofitReturn.status);
-                Log.d(TAG, "onResponse: "+retrofitReturn.message);
+                Log.d(TAG, "onResponse: " + response);
+                Log.d(TAG, "onResponse: " + retrofitReturn.status);
+                Log.d(TAG, "onResponse: " + retrofitReturn.message);
                 mReleasePresenter.fileOK();
             }
 
@@ -66,16 +67,16 @@ public class ReleaseModel implements IReleaseModel {
     }
 
     @Override
-    public void pushFile(int pointId, int type, Uri uri) {
+    public void pushFile(int pointId, int type, Uri uri, String title) {
 
         SharedPreferences preferences = App.getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-        mToken = preferences.getString("token","");
-        File file = new File(UriToPathUtil.getImageAbsolutePath(App.getContext(),uri));
+        mToken = preferences.getString("token", "");
+        File file = new File(UriToPathUtil.getImageAbsolutePath(App.getContext(), uri));
         final RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
         final IMessageRequest request = RequestFactory.getRetrofit().create(IMessageRequest.class);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-        Call<RetrofitReturn> call = request.addFile("upload/" + pointId, mToken,pointId,type,body);
+        Call<RetrofitReturn> call = request.addFile("upload/" + pointId, mToken, pointId, type, title, body);
 
         //发送网络请求(异步)
         call.enqueue(new Callback<RetrofitReturn>() {
@@ -85,7 +86,7 @@ public class ReleaseModel implements IReleaseModel {
                 RetrofitReturn retrofitReturn = response.body();
                 Log.d("pushComment", "" + response);
                 Log.d("pushComment", "" + retrofitReturn);
-                Log.d("pushComment",""+retrofitReturn.message);
+                Log.d("pushComment", "" + retrofitReturn.message);
                 mReleasePresenter.fileOK();
             }
 
@@ -97,17 +98,18 @@ public class ReleaseModel implements IReleaseModel {
             }
         });
     }
+
     @Override
-    public void pushFile(int pointId, int type,String uri) {
+    public void pushFile(int pointId, int type, String uri, String title) {
         SharedPreferences preferences = App.getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-        mToken = preferences.getString("token","");
+        mToken = preferences.getString("token", "");
 
         File file = new File(uri);
         final RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
 
         final IMessageRequest request = RequestFactory.getRetrofit().create(IMessageRequest.class);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-        Call<RetrofitReturn> call = request.addFile("upload/" + pointId, mToken,pointId,type,body);
+        Call<RetrofitReturn> call = request.addFile("upload/" + pointId, mToken, pointId, type, title, body);
 
         //发送网络请求(异步)
         call.enqueue(new Callback<RetrofitReturn>() {
@@ -117,7 +119,7 @@ public class ReleaseModel implements IReleaseModel {
                 RetrofitReturn retrofitReturn = response.body();
                 Log.d("pushComment", "" + response);
                 Log.d("pushComment", "" + retrofitReturn);
-                Log.d("pushComment",""+retrofitReturn.message);
+                Log.d("pushComment", "" + retrofitReturn.message);
                 mReleasePresenter.fileOK();
             }
 
@@ -133,32 +135,19 @@ public class ReleaseModel implements IReleaseModel {
     @Override
     public void pushImageFile(int pointId, List<String> urlList) {
         SharedPreferences preferences = App.getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
-        mToken = preferences.getString("token","");
+        mToken = preferences.getString("token", "");
 
-        List<File> fileList = new ArrayList<>();
-        File[] files = new File[10];
+        List<MultipartBody.Part> listBody = new ArrayList<>();
 
-        int i=0;
-        for(String uri : urlList){
-            File file = new File(UriToPathUtil.getImageAbsolutePath(App.getContext(),Uri.parse((String) uri)));
-            fileList.add(file);
-            files[i]=file;
-            i++;
-        }
-
-        MultipartBody.Part[] parts = new MultipartBody.Part[10];
-        RequestBody[]  requestBodys = new  RequestBody[10];
-        List<RequestBody> listBody = new ArrayList<>();
-        i=0;
-        for(File file :fileList) {
-            RequestBody requestFile = RequestBody.create(MediaType.parse("multipart/form-data"), file);
+        for (String uri : urlList) {
+            File file = new File(uri);
+            RequestBody requestFile = RequestBody.create(MediaType.parse("*/*"), file);
             MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
-            listBody.add(requestFile);
-            i++;
+            listBody.add(body);
         }
 
         final IMessageRequest request = RequestFactory.getRetrofit().create(IMessageRequest.class);
-        Call<RetrofitReturn> call = request.uploadMangPhotos("uploadMangPhotos/" + pointId,"multipart/form-data", mToken,pointId,listBody);
+        Call<RetrofitReturn> call = request.uploadMangPhotos("uploadMangPhotos/" + pointId, mToken, listBody);
 
         //发送网络请求(异步)
         call.enqueue(new Callback<RetrofitReturn>() {
@@ -166,10 +155,10 @@ public class ReleaseModel implements IReleaseModel {
             @Override
             public void onResponse(Call<RetrofitReturn> call, Response<RetrofitReturn> response) {
                 RetrofitReturn retrofitReturn = response.body();
-                Log.d(TAG, "onResponse: Image "+response);
-                Log.d(TAG, "onResponse: "+retrofitReturn);
-                Log.d(TAG, "onResponse: "+retrofitReturn.status);
-                Log.d(TAG, "onResponse: "+retrofitReturn.message);
+                Log.d(TAG, "onResponse: Image " + response);
+                Log.d(TAG, "onResponse: " + response.body());
+                Log.d(TAG, "onResponse: " + retrofitReturn.status);
+                Log.d(TAG, "onResponse: " + retrofitReturn.message);
                 mReleasePresenter.fileOK();
             }
 

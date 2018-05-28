@@ -33,7 +33,7 @@ public class RetrofitReturnGetMessage {
         public String userName;
 
         @SerializedName("content")
-        public String content;
+        public Content content;
 
         @SerializedName("remarkCount")
         public int comtNum;
@@ -46,5 +46,16 @@ public class RetrofitReturnGetMessage {
 
         @SerializedName("isClick")
         public boolean likeFlag;
+    }
+
+    public class Content{
+        @SerializedName("url")
+        public String url;
+
+        @SerializedName("title")
+        public String title;
+
+        @SerializedName("urls")
+        public List<String> urls;
     }
 }

@@ -1,5 +1,6 @@
 package com.example.heshu.mymap.adapter;
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -91,7 +92,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             comtButton = (Button) itemView.findViewById(R.id.comt_icon);
             comtNum = (TextView) itemView.findViewById(R.id.comt_num);
             if (mType == TYPE_COMMENT) {
-                commentText = (TextView) itemView.findViewById(R.id.comment_text);
+                // commentText = (TextView) itemView.findViewById(R.id.comment_text);
             } else if (mType == TYPE_IMAGE) {
                 imageGridlayout = (NineGridlayout) itemView.findViewById(R.id.iv_ngrid_layout);
                 imageConView = (CustomImageView) itemView.findViewById(R.id.iv_oneimage);
@@ -120,7 +121,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         View view = null;
         if (mType == TYPE_COMMENT) {
-            view = LayoutInflater.from(mContext).inflate(R.layout.activity_show_message_comment_item, parent, false);
+            view = LayoutInflater.from(mContext).inflate(R.layout.activity_show_comment, parent, false);
         } else if (mType == TYPE_IMAGE) {
             view = LayoutInflater.from(mContext).inflate(R.layout.activity_show_message_image_item, parent, false);
         } else if (mType == TYPE_VOICE) {
@@ -139,9 +140,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         holder.date.setText(messageBean.getDate());
         holder.comtNum.setText("(" + messageBean.getComtNum() + ")");
         holder.likeNum.setText("(" + messageBean.getLikeNum() + ")");
-        if(messageBean.isLikeFlag()==true) {
+        if (messageBean.isLikeFlag() == true) {
             holder.likeButton.setBackgroundResource(R.drawable.ic_like_ok);
-        }else {
+        } else {
             holder.likeButton.setBackgroundResource(R.drawable.ic_like);
         }
 
@@ -154,7 +155,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                     messageBean.setLikeNum(messageBean.getLikeNum() + 1);
                     isLike(messageBean.getCommentId());
                     holder.likeButton.setBackgroundResource(R.drawable.ic_like_ok);
-                }else {
+                } else {
                     holder.likeNum.setText("(" + (messageBean.getLikeNum() - 1) + ")");
                     messageBean.setLikeFlag(false);
                     messageBean.setLikeNum(messageBean.getLikeNum() - 1);
@@ -167,69 +168,89 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         if (mType == TYPE_COMMENT) {
             holder.commentText.setText(messageBean.getCommentText());
         } else if (mType == TYPE_IMAGE) {
-            if (messageBean.getCommentText() != null) {
-                String Uri[] = messageBean.getCommentText().split("&");
-                List<ImageBean> list = new ArrayList<>();
-                for (int i = 0; i < Uri.length; i++) {
-                    ImageBean imageBean = new ImageBean(Prefix + Uri[i], 1, 200, 200);
-                    list.add(imageBean);
-                }
-                if (list.size() == 1) {
-                    holder.imageGridlayout.setVisibility(View.GONE);
-                    holder.imageConView.setVisibility(View.VISIBLE);
-                    handlerOneImage(holder, list.get(0));
-                } else {
-                    holder.imageGridlayout.setVisibility(View.VISIBLE);
-                    holder.imageConView.setVisibility(View.GONE);
-                    holder.imageGridlayout.setImagesData(list);
-                }
+
+            List<String> Uris = messageBean.getUrls();
+            List<ImageBean> list = new ArrayList<>();
+            Log.d(TAG, "onBindViewHolder: " + messageBean.getUrls());
+            for (int i = 0; i < Uris.size(); i++) {
+                ImageBean imageBean = new ImageBean(Prefix + Uris.get(i), 1, 200, 200);
+                list.add(imageBean);
+
             }
+            if (list.size() == 1) {
+                holder.imageGridlayout.setVisibility(View.GONE);
+                holder.imageConView.setVisibility(View.VISIBLE);
+                handlerOneImage(holder, list.get(0));
+            } else {
+                holder.imageGridlayout.setVisibility(View.VISIBLE);
+                holder.imageConView.setVisibility(View.GONE);
+                holder.imageGridlayout.setImagesData(list);
+            }
+
         } else if (mType == TYPE_VOICE) {
-            MediaPlayerUtil.initPaly(Prefix + messageBean.getCommentText());
-            holder.playButton.setText(MediaPlayerUtil.mediaPlayerDate());
-            MediaPlayerUtil.mediaPlayerStop();
-            final AnimationDrawable frameAnim = (AnimationDrawable) mContext.getResources().getDrawable(R.drawable.sound);
-            frameAnim.setBounds(0, 0, frameAnim.getMinimumWidth(), frameAnim.getMinimumHeight());
-            holder.playButton.setCompoundDrawables(frameAnim, null, null, null);
+            if (messageBean.getCommentText() != null) {
+                MediaPlayerUtil.initPaly(Prefix + messageBean.getCommentText());
+                holder.playButton.setText(MediaPlayerUtil.mediaPlayerDate());
+                MediaPlayerUtil.mediaPlayerStop();
+
+                final AnimationDrawable frameAnim = (AnimationDrawable) mContext.getResources().getDrawable(R.drawable.sound);
+                frameAnim.setBounds(0, 0, frameAnim.getMinimumWidth(), frameAnim.getMinimumHeight());
+                holder.playButton.setCompoundDrawables(frameAnim, null, null, null);
 
 
-            holder.playButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    MediaPlayerUtil.initPaly(Prefix + messageBean.getCommentText());
-                    MediaPlayerUtil.mediaPlayerStart();
-                    MediaPlayerUtil.midiaPlayerSetListenrt((new MediaPlayer.OnCompletionListener() {
-                        @Override
-                        public void onCompletion(MediaPlayer mp) {
-                            Log.d("tag", "播放完毕");
-                            frameAnim.stop();
-                            frameAnim.selectDrawable(0);
-                        }
-                    }));
-                    frameAnim.start();
-                }
-            });
-
+                holder.playButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        MediaPlayerUtil.initPaly(Prefix + messageBean.getCommentText());
+                        MediaPlayerUtil.mediaPlayerStart();
+                        MediaPlayerUtil.midiaPlayerSetListenrt((new MediaPlayer.OnCompletionListener() {
+                            @Override
+                            public void onCompletion(MediaPlayer mp) {
+                                Log.d("tag", "播放完毕");
+                                frameAnim.stop();
+                                frameAnim.selectDrawable(0);
+                            }
+                        }));
+                        frameAnim.start();
+                    }
+                });
+            }
 
         } else if (mType == TYPE_VIDEO) {
-            holder.videoView.setMediaController(new MediaController(mContext));
-            holder.videoView.setOnCompletionListener(new MyPlayerOnCompletionListener());
-            holder.videoView.setVideoURI(Uri.parse(Prefix + messageBean.getCommentText()));
+            if (messageBean.getCommentText() != null) {
+                holder.videoView.setMediaController(new MediaController(mContext));
+                holder.videoView.setOnCompletionListener(new MyPlayerOnCompletionListener());
 
-            MediaMetadataRetriever media = new MediaMetadataRetriever();
-            media.setDataSource(Prefix + messageBean.getCommentText(), new HashMap());
-            Bitmap bitmap = media.getFrameAtTime();
-            holder.videoImage.setImageBitmap(bitmap);
 
-            holder.playButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    holder.playButton.setVisibility(View.INVISIBLE);
-                    holder.videoImage.setVisibility(View.INVISIBLE);
-                    holder.videoView.setVisibility(View.VISIBLE);
-                    holder.videoView.start();
-                }
-            });
+                new Thread(new Runnable() {
+                    @Override
+                    public void run() {
+                        MediaMetadataRetriever media = new MediaMetadataRetriever();
+                        media.setDataSource(Prefix + messageBean.getCommentText(), new HashMap());
+                        final Bitmap bitmap = media.getFrameAtTime();
+
+                        ((Activity) mContext).runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                holder.videoView.setVideoURI(Uri.parse(Prefix + messageBean.getCommentText()));
+                                holder.videoImage.setImageBitmap(bitmap);
+                            }
+                        });
+
+                    }
+                });
+
+
+                holder.playButton.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View view) {
+                        holder.playButton.setVisibility(View.INVISIBLE);
+                        holder.videoImage.setVisibility(View.INVISIBLE);
+                        holder.videoView.setVisibility(View.VISIBLE);
+                        holder.videoView.start();
+                    }
+                });
+            }
         }
     }
 

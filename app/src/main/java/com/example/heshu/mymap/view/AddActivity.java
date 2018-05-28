@@ -37,6 +37,9 @@ import com.example.heshu.mymap.util.UriToPathUtil;
 import java.util.ArrayList;
 import java.util.List;
 
+import me.nereo.multi_image_selector.MultiImageSelector;
+import me.nereo.multi_image_selector.MultiImageSelectorActivity;
+
 /**
  * Created by heshu on 2018/2/12.
  */
@@ -69,10 +72,9 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
 
     //照片
     public NineGridlayout mMore;
-    private Uri imageUri;
+    private ArrayList<String> imageUris;
     private List<String> stringUrl;
-    private static final int PHOTO_REQUEST_GALLERY = 20;// 从相册中选择
-    private static final int PHOTO_REQUEST_CAREMA = 10;// 拍照
+    private static final int REQUEST_IMAGE= 20;// 从相册中选择
     List<ImageBean> mImageList = new ArrayList<>();
 
     //录音
@@ -99,7 +101,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
             setContentView(R.layout.activity_add_comment);
         } else if (fileType == TYPE_IMAGE) {
             setContentView(R.layout.activity_add_image);
-            imageUri = Uri.parse(intent.getStringExtra("image"));
+            imageUris =intent.getStringArrayListExtra("image");
 
         } else if (fileType == TYPE_VOICE) {
             setContentView(R.layout.activity_add_voice);
@@ -148,7 +150,10 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
             MAX_NUM = 10;
             mMore = (NineGridlayout) findViewById(R.id.iv_ngrid_layout);
             stringUrl = new ArrayList<>();
-            addImageUrlList("" + imageUri);
+            for(String uri :imageUris){
+                addImageUrlList(uri);
+            }
+
         } else if (fileType == TYPE_VOICE) {
             mPlayVoiceButton = (Button) findViewById(R.id.play_voice_button);
             mPlayVoiceButton.setText(date);
@@ -235,12 +240,18 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
                             mPresenter.requestPushComment(mEditText.getText().toString(), mLocationBean.getId()); //将数据发送
                         }
                     } else if (fileType == TYPE_IMAGE) {
-                        mPresenter.requestPushImage(imageUri, stringUrl, mLocationBean.getId());
+                        mPresenter.requestPushImage(stringUrl, mLocationBean.getId());
                     } else if (fileType == TYPE_VOICE) {
-                        mPresenter.requestPushVoice(mFilePath, mLocationBean.getId());
+
+                            mPresenter.requestPushVoice(mFilePath, mLocationBean.getId(),"");
+
+
                     } else if (fileType == TYPE_VIDEO) {
                         mPlayVideoButton.setVisibility(View.INVISIBLE);
-                        mPresenter.requestPushVideo(VideoUri, mLocationBean.getId());
+                        if (!mEditText.getText().toString().equals("")) {
+                            mPresenter.requestPushVideo(VideoUri, mLocationBean.getId(),mEditText.getText().toString());
+                        }
+
                     }
 
                 }
@@ -285,31 +296,24 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
         MyLocationConfiguration config = new MyLocationConfiguration(MyLocationConfiguration.LocationMode.FOLLOWING, true, null);
         mBaiduMap.setMyLocationConfiguration(config);
     }
+
+    //回调添加照片
     public void addImage() {
-        gallery();
+        MultiImageSelector.create(this)
+                .origin(imageUris) // 默认已选择图片. 只有在选择模式为多选时有效
+                .start(this, REQUEST_IMAGE);
     }
 
-    //从图库中获取图片
-    private void gallery() {
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType("image/*");
-        startActivityForResult(intent, PHOTO_REQUEST_GALLERY);
-    }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (requestCode == PHOTO_REQUEST_CAREMA) {  // 拍照
-            /*if (FileUtil.hasSdcard()) {
-                Uri uri = Uri.fromFile(mTempFile);
-                Intent intent = new Intent(MapActivity.this, AddImageActivity.class);
-                intent.putExtra("image", uri.toString());
-                startActivity(intent);
-            } else {
-                Toast.makeText(MapActivity.this, "未找到储存卡", Toast.LENGTH_SHORT);
-            }*/
-        } else if (requestCode == PHOTO_REQUEST_GALLERY) { //从图库中获得
-            if (data != null) {
-                addImageUrlList(data.getData().toString());
+        if (requestCode == REQUEST_IMAGE) {
+            if(resultCode == RESULT_OK){
+                List<String> path = data.getStringArrayListExtra(MultiImageSelectorActivity.EXTRA_RESULT);
+
+                for(String uri :path){
+                    addImageUrlList(uri);
+                }
             }
         }
         super.onActivityResult(requestCode, resultCode, data);
