@@ -34,7 +34,7 @@ public class CommentBean {
     public class Data {
 
         private int total;
-        private List<CommentDetailBean> list;
+        private List<CommentMessageBean> list;
         public void setTotal(int total) {
             this.total = total;
         }
@@ -42,10 +42,10 @@ public class CommentBean {
             return total;
         }
 
-        public void setList(List<CommentDetailBean> list) {
+        public void setList(List<CommentMessageBean> list) {
             this.list = list;
         }
-        public List<CommentDetailBean> getList() {
+        public List<CommentMessageBean> getList() {
             return list;
         }
 

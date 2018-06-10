@@ -6,7 +6,7 @@ import java.util.List;
  * Created by heshu on 2018/5/21.
  */
 
-public class CommentDetailBean {
+public class CommentMessageBean {
     private int id;
     private String nickName;
     private String userLogo;
@@ -16,7 +16,7 @@ public class CommentDetailBean {
     private String createDate;
     private List<ReplyDetailBean> replyList;
 
-    public CommentDetailBean(String nickName, String content, String createDate) {
+    public CommentMessageBean(String nickName, String content, String createDate) {
         this.nickName = nickName;
         this.content = content;
         this.createDate = createDate;

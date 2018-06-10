@@ -1,6 +1,5 @@
 package com.example.heshu.mymap.adapter;
 
-import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -22,12 +21,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
+import com.bumptech.glide.Glide;
 import com.example.heshu.mymap.R;
 import com.example.heshu.mymap.bean.ImageBean;
 import com.example.heshu.mymap.bean.MessageBean;
-import com.example.heshu.mymap.customView.CustomImageView;
 import com.example.heshu.mymap.customView.NineGridlayout;
-import com.example.heshu.mymap.customView.ScreenTools;
 import com.example.heshu.mymap.gson.RetrofitReturn;
 import com.example.heshu.mymap.network.ILikeAndRemarksRequest;
 import com.example.heshu.mymap.network.RequestFactory;
@@ -74,13 +72,15 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
         Button comtButton;
 
         public NineGridlayout imageGridlayout;
-        public CustomImageView imageConView;
+        public ImageView imageConView;
 
         Button playButton;
 
         VideoView videoView;
         ImageView videoImage;
         Button PlayButton;
+
+        TextView headline;
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -94,11 +94,13 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             if (mType == TYPE_COMMENT) {
                 // commentText = (TextView) itemView.findViewById(R.id.comment_text);
             } else if (mType == TYPE_IMAGE) {
+                headline = (TextView) itemView.findViewById(R.id.headline);
                 imageGridlayout = (NineGridlayout) itemView.findViewById(R.id.iv_ngrid_layout);
-                imageConView = (CustomImageView) itemView.findViewById(R.id.iv_oneimage);
+                imageConView = (ImageView) itemView.findViewById(R.id.iv_oneimage);
             } else if (mType == TYPE_VOICE) {
                 playButton = (Button) itemView.findViewById(R.id.play_button);
             } else if (mType == TYPE_VIDEO) {
+                headline = (TextView) itemView.findViewById(R.id.headline);
                 videoView = (VideoView) itemView.findViewById(R.id.video);
                 videoImage = (ImageView) itemView.findViewById(R.id.video_image);
                 playButton = (Button) itemView.findViewById(R.id.play_video_button);
@@ -169,11 +171,14 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
             holder.commentText.setText(messageBean.getCommentText());
         } else if (mType == TYPE_IMAGE) {
 
+            holder.headline.setText(messageBean.getTitle());
+
+            holder.headline.setText(messageBean.getTitle());
             List<String> Uris = messageBean.getUrls();
             List<ImageBean> list = new ArrayList<>();
             Log.d(TAG, "onBindViewHolder: " + messageBean.getUrls());
             for (int i = 0; i < Uris.size(); i++) {
-                ImageBean imageBean = new ImageBean(Prefix + Uris.get(i), 1, 200, 200);
+                ImageBean imageBean = new ImageBean(Prefix + Uris.get(i), 1, 250, 250);
                 list.add(imageBean);
 
             }
@@ -185,6 +190,7 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
                 holder.imageGridlayout.setVisibility(View.VISIBLE);
                 holder.imageConView.setVisibility(View.GONE);
                 holder.imageGridlayout.setImagesData(list);
+
             }
 
         } else if (mType == TYPE_VOICE) {
@@ -218,27 +224,22 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
         } else if (mType == TYPE_VIDEO) {
             if (messageBean.getCommentText() != null) {
+                if (messageBean.getTitle() != null) {
+                    holder.headline.setText(messageBean.getTitle());
+                } else {
+                    holder.headline.setVisibility(View.GONE);
+                }
                 holder.videoView.setMediaController(new MediaController(mContext));
                 holder.videoView.setOnCompletionListener(new MyPlayerOnCompletionListener());
 
 
-                new Thread(new Runnable() {
-                    @Override
-                    public void run() {
-                        MediaMetadataRetriever media = new MediaMetadataRetriever();
-                        media.setDataSource(Prefix + messageBean.getCommentText(), new HashMap());
-                        final Bitmap bitmap = media.getFrameAtTime();
+                MediaMetadataRetriever media = new MediaMetadataRetriever();
+                media.setDataSource(Prefix + messageBean.getCommentText(), new HashMap());
+                final Bitmap bitmap = media.getFrameAtTime();
 
-                        ((Activity) mContext).runOnUiThread(new Runnable() {
-                            @Override
-                            public void run() {
-                                holder.videoView.setVideoURI(Uri.parse(Prefix + messageBean.getCommentText()));
-                                holder.videoImage.setImageBitmap(bitmap);
-                            }
-                        });
 
-                    }
-                });
+                holder.videoView.setVideoURI(Uri.parse(Prefix + messageBean.getCommentText()));
+                holder.videoImage.setImageBitmap(bitmap);
 
 
                 holder.playButton.setOnClickListener(new View.OnClickListener() {
@@ -313,32 +314,9 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.ViewHold
 
     //加载图片
     private void handlerOneImage(final ViewHolder holder, ImageBean imageBean) {
-        int totalWidth;
-        int imageWidth;
-        int imageHeight;
-        ScreenTools screenTools = ScreenTools.instance(mContext);
-        totalWidth = screenTools.getScreenWidth() - screenTools.dip2px(80);
-        imageWidth = screenTools.dip2px(imageBean.getWidth());
-        imageHeight = screenTools.dip2px(imageBean.getHeight());
-        if (imageBean.getWidth() <= imageBean.getHeight()) {
-            if (imageHeight > totalWidth) {
-                imageHeight = totalWidth;
-                imageWidth = (imageHeight * imageBean.getWidth()) / imageBean.getHeight();
-            }
-        } else {
-            if (imageWidth > totalWidth) {
-                imageWidth = totalWidth;
-                imageHeight = (imageWidth * imageBean.getHeight()) / imageBean.getWidth();
-            }
-        }
-
-        ViewGroup.LayoutParams layoutParams = holder.imageConView.getLayoutParams();
-        layoutParams.height = imageHeight;
-        layoutParams.width = imageWidth;
-        holder.imageConView.setLayoutParams(layoutParams);
-        holder.imageConView.setClickable(true);
-        holder.imageConView.setScaleType(ImageView.ScaleType.FIT_XY);
-        holder.imageConView.setImageUrl(imageBean.getUrl());
+        Glide.with(mContext)
+                .load(imageBean.getUrl())
+                .into(holder.imageConView);
         Log.d(TAG, "handlerOneImage: " + imageBean.getUrl());
     }
 

@@ -40,6 +40,6 @@ public interface IMessageRequest {
     //多文件上传
     @POST
     @Multipart
-    Call<RetrofitReturn>uploadMangPhotos(@Url String url, @Header("token") String token, @Part List<MultipartBody.Part> file);
+    Call<RetrofitReturn>uploadMangPhotos(@Url String url, @Header("token") String token, @Part("title") String title, @Part List<MultipartBody.Part> file);
 
 }

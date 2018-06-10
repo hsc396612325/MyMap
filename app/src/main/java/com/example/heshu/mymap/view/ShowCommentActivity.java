@@ -28,7 +28,7 @@ import android.widget.Toast;
 import com.example.heshu.mymap.R;
 import com.example.heshu.mymap.adapter.CommentExpandAdapter;
 import com.example.heshu.mymap.bean.CommentBean;
-import com.example.heshu.mymap.bean.CommentDetailBean;
+import com.example.heshu.mymap.bean.CommentMessageBean;
 import com.google.gson.Gson;
 
 import java.util.List;
@@ -42,7 +42,7 @@ public class ShowCommentActivity extends AppCompatActivity implements View.OnCli
     private LinearLayout mLinearLayout;
     private TextView bt;
     private CommentExpandAdapter adapter;
-    private List<CommentDetailBean> mCommentsList;
+    private List<CommentMessageBean> mCommentsList;
     private ExpandableListView expandableListView;
     private CommentBean commentBean;
     private BottomSheetDialog dialog;
@@ -123,7 +123,7 @@ public class ShowCommentActivity extends AppCompatActivity implements View.OnCli
     /**
      * 初始化评论和回复列表
      */
-    private void initExpandableListView(final List<CommentDetailBean> commentList){
+    private void initExpandableListView(final List<CommentMessageBean> commentList){
         expandableListView.setGroupIndicator(null);
 
         //默认展开所以回复
@@ -167,10 +167,10 @@ public class ShowCommentActivity extends AppCompatActivity implements View.OnCli
      * func:生成测试数据
      * @return 评论数据
      */
-    private List<CommentDetailBean> generateTestData(){
+    private List<CommentMessageBean> generateTestData(){
         Gson gson = new Gson();
         commentBean = gson.fromJson(testJson, CommentBean.class);
-        List<CommentDetailBean> commentList = commentBean.getData().getList();
+        List<CommentMessageBean> commentList = commentBean.getData().getList();
         return commentList;
     }
     @Override
@@ -230,7 +230,7 @@ public class ShowCommentActivity extends AppCompatActivity implements View.OnCli
                 if(!TextUtils.isEmpty(replyContent)){
                     mPopupWindow.dismiss();
                     imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
-                    CommentDetailBean.ReplyDetailBean detailBean = new CommentDetailBean.ReplyDetailBean("小红",replyContent);
+                    CommentMessageBean.ReplyDetailBean detailBean = new CommentMessageBean.ReplyDetailBean("小红",replyContent);
                     adapter.addTheReplyData(detailBean, position);
                     expandableListView.expandGroup(position);
                     Toast.makeText(ShowCommentActivity.this,"回复成功",Toast.LENGTH_SHORT).show();
@@ -301,7 +301,7 @@ public class ShowCommentActivity extends AppCompatActivity implements View.OnCli
                 if(!TextUtils.isEmpty(replyContent)){
                     imm.toggleSoftInput(0, InputMethodManager.HIDE_NOT_ALWAYS);
                     mPopupWindow.dismiss();
-                    CommentDetailBean.ReplyDetailBean detailBean = new CommentDetailBean.ReplyDetailBean("小红",replyContent);
+                    CommentMessageBean.ReplyDetailBean detailBean = new CommentMessageBean.ReplyDetailBean("小红",replyContent);
                     detailBean.setReplyname(mCommentsList.get(position).getReplyList().get(childPosition).getNickName());
                     adapter.addTheReplyData(detailBean, position);
                     expandableListView.expandGroup(position);

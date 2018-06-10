@@ -57,14 +57,14 @@ public class MessageModel implements IMessageModel{
                         MessageBean messageBean = new MessageBean();
                         messageBean.setName(data.userName);
                         messageBean.setCommentText(data.content.url);
+                        messageBean.setTitle(data.content.title);
+                        messageBean.setUrls(data.content.urls);
                         messageBean.setDate(data.createAt);
                         messageBean.setLikeNum(data.likeNum);
                         messageBean.setComtNum(data.comtNum);
                         messageBean.setLikeFlag(data.likeFlag);
                         messageBean.setCommentId(data.dataId);
-                        messageBean.setTitle(data.content.title);
-                        messageBean.setUrls(data.content.urls);
-                        Log.d(TAG, "onResponse: "+data.likeFlag);
+                        Log.d(TAG, "onResponse: "+data.content.title);
                         mMessageBeanList.add(messageBean);
                     }
                 }

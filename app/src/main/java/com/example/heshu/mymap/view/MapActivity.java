@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.provider.MediaStore;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AlertDialog;
+import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.LayoutInflater;
@@ -42,6 +43,7 @@ import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.model.LatLng;
 import com.example.heshu.mymap.R;
 import com.example.heshu.mymap.bean.LocationBean;
+import com.example.heshu.mymap.customView.Config;
 import com.example.heshu.mymap.presenter.MapPresenter;
 import com.example.heshu.mymap.util.AudioRecoderUtil;
 import com.example.heshu.mymap.util.FileUtil;
@@ -101,7 +103,7 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
     private File mTempFile;
 
     private List<LocationBean> mLocationBeanList;
-    private LocationBean myTodayPoint;
+    private LocationBean mTodayPoint;
     private LocationBean mMarkerPoint;
     private boolean flag = false;
 
@@ -117,6 +119,7 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
         initPermission();
         RegisterTokenUtil.Register();
         initMarkerClick();
+        getDeviceDensity();
     }
 
 
@@ -400,8 +403,8 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        myTodayPoint.setPointName(editText.getText().toString());
-                        mPresenter.addPoint(myTodayPoint);
+                        mTodayPoint.setPointName(editText.getText().toString());
+                        mPresenter.addPoint(mTodayPoint);
                     }
                 });
         inputDialog.setNegativeButton("取消",
@@ -547,7 +550,7 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
     public void showLocation(LocationBean locationBean) {
         mBaiduMap.setMyLocationEnabled(true);
 
-        myTodayPoint = locationBean;
+        mTodayPoint = locationBean;
         //BitmapDescriptor mCurrentMode = BitmapDescriptorFactory.fromResource(R.drawable.ic_geo);//自定义图标
         MyLocationData locData = new MyLocationData.Builder().accuracy(0)
                 .direction(0).latitude(locationBean.getLatitude())
@@ -599,5 +602,10 @@ public class MapActivity extends BaseActivity implements IMapView, View.OnClickL
     public void dissMissAllSpot() {
         // mBaiduMap.clear();
     }
-
+    protected void getDeviceDensity() {
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        Config.EXACT_SCREEN_HEIGHT = metrics.heightPixels;
+        Config.EXACT_SCREEN_WIDTH = metrics.widthPixels;
+    }
 }

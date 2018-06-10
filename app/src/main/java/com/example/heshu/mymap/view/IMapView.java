@@ -18,5 +18,4 @@ public interface IMapView {
 
     void dissMissAllSpot();
 
-
 }

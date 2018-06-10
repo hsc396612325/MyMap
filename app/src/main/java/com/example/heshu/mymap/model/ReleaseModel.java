@@ -76,6 +76,7 @@ public class ReleaseModel implements IReleaseModel {
 
         final IMessageRequest request = RequestFactory.getRetrofit().create(IMessageRequest.class);
         MultipartBody.Part body = MultipartBody.Part.createFormData("file", file.getName(), requestFile);
+
         Call<RetrofitReturn> call = request.addFile("upload/" + pointId, mToken, pointId, type, title, body);
 
         //发送网络请求(异步)
@@ -133,7 +134,7 @@ public class ReleaseModel implements IReleaseModel {
     }
 
     @Override
-    public void pushImageFile(int pointId, List<String> urlList) {
+    public void pushImageFile(int pointId, List<String> urlList,String title) {
         SharedPreferences preferences = App.getContext().getSharedPreferences("token", Context.MODE_PRIVATE);
         mToken = preferences.getString("token", "");
 
@@ -147,7 +148,7 @@ public class ReleaseModel implements IReleaseModel {
         }
 
         final IMessageRequest request = RequestFactory.getRetrofit().create(IMessageRequest.class);
-        Call<RetrofitReturn> call = request.uploadMangPhotos("uploadMangPhotos/" + pointId, mToken, listBody);
+        Call<RetrofitReturn> call = request.uploadMangPhotos("uploadMangPhotos/" + pointId, mToken,title, listBody);
 
         //发送网络请求(异步)
         call.enqueue(new Callback<RetrofitReturn>() {

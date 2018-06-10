@@ -240,7 +240,9 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
                             mPresenter.requestPushComment(mEditText.getText().toString(), mLocationBean.getId()); //将数据发送
                         }
                     } else if (fileType == TYPE_IMAGE) {
-                        mPresenter.requestPushImage(stringUrl, mLocationBean.getId());
+                        if (!mEditText.getText().toString().equals("")) {
+                            mPresenter.requestPushImage(stringUrl, mLocationBean.getId(),mEditText.getText().toString());
+                        }
                     } else if (fileType == TYPE_VOICE) {
 
                             mPresenter.requestPushVoice(mFilePath, mLocationBean.getId(),"");
@@ -300,7 +302,7 @@ public class AddActivity extends BaseActivity implements View.OnClickListener, I
     //回调添加照片
     public void addImage() {
         MultiImageSelector.create(this)
-                .origin(imageUris) // 默认已选择图片. 只有在选择模式为多选时有效
+                .count(9-stringUrl.size())
                 .start(this, REQUEST_IMAGE);
     }
 

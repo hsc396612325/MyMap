@@ -89,7 +89,7 @@
                     android:background="@drawable/btn_fillet"
                     android:cursorVisible="true"
                     android:gravity="top|left"
-                    android:hint="添加评论..."
+                    android:hint="添加标题..."
                     android:maxLength="10"
                     android:singleLine="false"
                     android:textColor="@color/colorText4"

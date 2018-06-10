@@ -32,8 +32,8 @@ public class ReleasePresenter {
         rModel.pushComment(id, eText);
     }
 
-    public void requestPushImage( final List<String> urlList, int id) {
-        rModel.pushImageFile(id, urlList);
+    public void requestPushImage( final List<String> urlList, int id,String title) {
+        rModel.pushImageFile(id, urlList,title);
     }
 
     public void requestPushVideo(final Uri uri, int id,String title) {

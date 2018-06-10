@@ -17,5 +17,5 @@ public interface IReleaseModel  {
     void pushFile(int pointId,int type,String uri,String title);
     void pushFile(int pointId,int type,Uri uri,String title);
     //上传多个图片文件
-    void pushImageFile(int pointId, List<String> urlList);
+    void pushImageFile(int pointId, List<String> urlList,String title);
 }

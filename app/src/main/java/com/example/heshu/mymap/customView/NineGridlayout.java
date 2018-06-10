@@ -1,16 +1,20 @@
 package com.example.heshu.mymap.customView;
 
 import android.content.Context;
+import android.content.DialogInterface;
 import android.graphics.Color;
+import android.support.v7.app.AlertDialog;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 import com.example.heshu.mymap.bean.ImageBean;
 import com.example.heshu.mymap.view.AddActivity;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -24,16 +28,20 @@ public class NineGridlayout extends ViewGroup {
     private int gap = 5;
     private int columns;
     private int rows;
-    private List listData;
+    private List<ImageBean> listData;
     private int totalWidth;
+    private Context mContext;
     private static final String TAG = "NineGridlayout";
 
     public NineGridlayout(Context context) {
+
         super(context);
+        mContext = context;
     }
 
     public NineGridlayout(Context context, AttributeSet attrs) {
         super(context, attrs);
+        mContext = context;
         ScreenTools screenTools = ScreenTools.instance(context);
         totalWidth = screenTools.getScreenWidth() - screenTools.dip2px(20);
     }
@@ -65,25 +73,27 @@ public class NineGridlayout extends ViewGroup {
         params.height = singleHeight * rows + gap * (rows - 1);
         setLayoutParams(params);
 
-        for (int i = 0; i < childrenCount&&i<9; i++) {
+        for (int i = 0; i < childrenCount && i < 9; i++) {
             Log.d(TAG, "layoutChildrenView: " + i);
 
             CustomImageView childrenView = (CustomImageView) getChildAt(i);
             Log.d(TAG, "layoutChildrenView: " + childrenView);
 
-            if (((ImageBean) lists.get(i)).getType() == 1) {
-                childrenView.setImageUrl(((ImageBean) lists.get(i)).getUrl());
-            } else {
-                childrenView.setImageUrl(((ImageBean) lists.get(i)).getDrawable());
+            if (childrenView != null) {
+                if (((ImageBean) lists.get(i)).getType() == 1) {
+                    childrenView.setImageUrl(((ImageBean) lists.get(i)).getUrl());
+                } else {
+                    childrenView.setImageUrl(((ImageBean) lists.get(i)).getDrawable());
+                }
+
+                int[] position = findPosition(i);
+                int left = (singleWidth + gap) * position[1];
+                int top = (singleHeight + gap) * position[0];
+                int right = left + singleWidth;
+                int bottom = top + singleHeight;
+
+                childrenView.layout(left, top, right, bottom);
             }
-
-            int[] position = findPosition(i);
-            int left = (singleWidth + gap) * position[1];
-            int top = (singleHeight + gap) * position[0];
-            int right = left + singleWidth;
-            int bottom = top + singleHeight;
-
-            childrenView.layout(left, top, right, bottom);
         }
     }
 
@@ -121,7 +131,7 @@ public class NineGridlayout extends ViewGroup {
             int i = 0;
             while (i < lists.size()) {
                 if (lists.get(i).getType() == 1) {
-                    CustomImageView iv = generateImageView();
+                    CustomImageView iv = generateImageView(i);
                     addView(iv, generateDefaultLayoutParams());
                 } else {
                     CustomImageView iv = generateAddImageView();
@@ -131,14 +141,14 @@ public class NineGridlayout extends ViewGroup {
             }
         } else {
             int num = lists.size() - 1;
-            removeViewAt(num-1);
-            if ( lists.get(num).getType() == 2) {
-                CustomImageView iv = generateImageView();
+            removeViewAt(num - 1);
+            if (lists.get(num).getType() == 2) {
+                CustomImageView iv = generateImageView(0);
                 addView(iv, generateDefaultLayoutParams());
                 CustomImageView ivAdd = generateAddImageView();
                 addView(ivAdd, generateDefaultLayoutParams());
             } else {
-                CustomImageView iv = generateImageView();
+                CustomImageView iv = generateImageView(0);
                 addView(iv, generateDefaultLayoutParams());
             }
 
@@ -181,13 +191,22 @@ public class NineGridlayout extends ViewGroup {
         }
     }
 
-    private CustomImageView generateImageView() {
+    private CustomImageView generateImageView(final int i) {
         CustomImageView iv = new CustomImageView(getContext());
         iv.setScaleType(ImageView.ScaleType.CENTER_CROP);
         iv.setOnClickListener(new OnClickListener() {
             @Override
             public void onClick(View v) {
-                Log.d(TAG, "onClick: 1111");
+                if (!listData.isEmpty()) {
+                    List<String > URLS = new ArrayList<>();
+
+                    for(ImageBean imageBean :listData){
+                        URLS.add(imageBean.getUrl());
+                    }
+                    new ShowImagesDialog(mContext,URLS, i).show();
+                    //showInputDialog();
+                    Log.d(TAG, "onClick: "+i);
+                }
             }
         });
         iv.setBackgroundColor(Color.parseColor("#f5f5f5"));
@@ -209,5 +228,25 @@ public class NineGridlayout extends ViewGroup {
         return iv;
     }
 
+    private void showInputDialog() {
+    /*@setView 装入一个EditView
+     */
+        final EditText editText = new EditText(mContext);
+        AlertDialog.Builder inputDialog =
+                new AlertDialog.Builder(mContext);
+        inputDialog.setTitle("输入该点的名字").setView(editText);
+        inputDialog.setPositiveButton("确定",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
 
+                    }
+                });
+        inputDialog.setNegativeButton("取消",
+                new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                    }
+                }).show();
+    }
 }
